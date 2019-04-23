@@ -11,7 +11,11 @@ namespace ItmoJobsFetchingBot
     {
         public HtmlNodeCollection ParseItmoJobs()
         {
-
+            string htmlAdress = @"https://careers.itmo.ru/catalog/";
+            HtmlWeb web = new HtmlWeb();
+            HtmlDocument htmlDoc = web.Load(htmlAdress);
+            HtmlNodeCollection nodes = htmlDoc.DocumentNode.SelectNodes("//*[contains(@class,'jobs-item')]");
+            return nodes;
         }
     }
 }
