@@ -23,7 +23,7 @@ namespace ItmoJobsFetchingBot
         private static string GetMessageFromParsedData(HtmlNode nodeToMessage)
         {
             string message = string.Empty;
-            message += nodeToMessage.ChildNodes["h6"].InnerText + "\n";
+            message += nodeToMessage.ChildNodes["h6"].InnerText + "\n"; 
             message += nodeToMessage.ChildNodes["span"].InnerText.Split(',')[0] + "\n"; // Наверное не лучшая идея сплитить по запятой, там просто 
             message += "https://careers.itmo.ru";                                       // _название компании_ , _город_
             message += nodeToMessage.ChildNodes["h6"].ChildNodes["a"].Attributes["href"].Value;
@@ -32,7 +32,7 @@ namespace ItmoJobsFetchingBot
         private static string GetMessageFromParsedData(HtmlNodeCollection nodesToMessage)
         {
             string message = string.Empty;
-            foreach (var node in nodesToMessage)
+            foreach (var node in nodesToMessage) //Возможно все-таки стоит заморочиться со стрингбилдером
             {
                 message += GetMessageFromParsedData(node) + "\n ------------------------\n";
             }
@@ -43,27 +43,28 @@ namespace ItmoJobsFetchingBot
             string answerToUser = string.Empty;
             switch (Usermessage)
             {
+                case "/start":
+                    answerToUser = "Привет!\nВведи /, чтобы увидеть команды";
+                    break;
+
                 case "/randpost":
                     answerToUser = Parsing(false);
                     break;
 
-                case "/allpost":
+                case "/allpost": //Вряд ли имеет какой-то толк, прост сделал, мб можно будет выводить фулл страницу конкретную
                     answerToUser = Parsing(true);
                     break;
 
-                case "/commands":
-                    answerToUser = "/randpost - Один случайный пост \n/allpost - Все посты";
-                    break;
                 default:
-                    answerToUser = "Error";
+                    answerToUser = "Нет такой команды :с\nПопробуй еще раз, чтобы увидеть команды, просто введи /";
                     break;
             }
             return answerToUser;
         }
-        private static string Parsing(bool needAll)
+        private static string Parsing(bool needAll) // От була надо будет уйти, пока не придумал как лучше сделать
         {
             ItmoParser parser = new ItmoParser();
-            HtmlNodeCollection foundNodes = parser.ParseItmoJobs();
+            HtmlNodeCollection foundNodes = parser.ParseItmoJobs(); // Надо будет добавить ссылку на номер страницы в аргументы
             if(needAll)
             {
                 return GetMessageFromParsedData(foundNodes);

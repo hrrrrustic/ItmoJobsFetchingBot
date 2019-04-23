@@ -9,9 +9,9 @@ namespace ItmoJobsFetchingBot
 {
     public class ItmoParser
     {
-        public HtmlNodeCollection ParseItmoJobs()
+        public HtmlNodeCollection ParseItmoJobs() // Будет кушать ссылка на номер страницы
         {
-            string htmlAdress = @"https://careers.itmo.ru/catalog/";
+            string htmlAdress = @"https://careers.itmo.ru/catalog/"; 
             HtmlWeb web = new HtmlWeb();
             HtmlDocument htmlDoc = web.Load(htmlAdress);
             HtmlNodeCollection nodes = htmlDoc.DocumentNode.SelectNodes("//*[contains(@class,'jobs-item')]");
