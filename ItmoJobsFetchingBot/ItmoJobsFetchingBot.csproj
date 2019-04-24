@@ -55,6 +55,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Answer.cs" />
     <Compile Include="Configurations.cs" />
     <Compile Include="ItmoJob.cs" />
     <Compile Include="ItmoParser.cs" />

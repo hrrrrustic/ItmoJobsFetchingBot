@@ -69,6 +69,48 @@ namespace ItmoJobsFetchingBot
             }
             return answerToUser;
         }
+        private static string UserMessageHandling(string userMessage) //Стоит рзбить на подфункции
+        {
+            int intArgument;
+            string answerToUser = string.Empty;
+            bool anyArgs = TryParseArgument(userMessage, out string[] splittedMessage);
+            if (anyArgs)
+            {
+                //int.TryParse(splittedMessage[2], out intArgument) ? CommandHandling(splittedMessage[0], intArgument) : CommandHandling(splittedMessage[0], splittedMessage[1]) ;
+            }
+            else
+            {
+                intArgument = 1;
+            }
+            return answerToUser;
+        }
+        
+        private static string CommandHandling(string commnand, int pageCount)
+        {
+
+            return "";
+        }
+        private static string CommandHandling(string commnand, string stringToSearch)
+        {
+
+            return "";
+        }
+        private static bool TryParseArgument(string userMessage, out string[] splittedMessage)
+        {
+            userMessage = userMessage.Trim();
+            userMessage = Regex.Replace(userMessage, @"\s+", " ");
+            string[] splittedUserMessage = userMessage.Split(' ');
+            if (splittedUserMessage.Length == 2)
+            {
+                splittedMessage = splittedUserMessage;
+                return true;
+            }
+            else
+            {
+                splittedMessage = null;
+                return false;
+            }
+        }
         
         private static int TryParseCommandArgument(string userMessage)
         {

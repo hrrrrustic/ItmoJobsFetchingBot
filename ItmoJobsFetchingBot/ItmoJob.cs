@@ -30,7 +30,7 @@ namespace ItmoJobsFetchingBot
             StringBuilder message = new StringBuilder();
             message.Append(this.PublicationDate.ToString("dd'/'MM'/'yyyy") + "\n");
             message.Append(this.JobName + "\n");
-            message.Append(this.CompanyName + "\n");
+            message.Append("Компания : " + this.CompanyName + "\n");
             message.Append(this.Experience.ToString() + "\n");
             message.Append(this.SalaryInfo + "\n");
             message.Append(Configurations.StartReference + this.EndAdress + "\n");
