@@ -13,30 +13,17 @@ namespace ItmoJobsFetchingBot
         public string EndAdress { get; set; }
 
         public DateTime PublicationDate;
+        public int MinSalary { get; set; } 
 
-        public static Dictionary<string, int> months = new Dictionary<string, int>()
-        {
-            {"янв", 1},
-            {"фев" ,2},
-            {"мар", 3},
-            {"апр", 4},
-            {"май", 5},
-            {"июн", 6},
-            {"июл", 7},
-            {"авг", 8},
-            {"сен", 9},
-            {"окт", 10},
-            {"ноя", 11},
-            {"дек", 12},
-        };
         public Tuple<int,int> Experience { get; set; }
-        public ItmoJob(string jName, string cName, string EAdress, string pDay, string pMonth, Tuple<int,int> exp)
+        public ItmoJob(string jName, string cName, string EAdress, DateTime date, Tuple<int,int> exp, int salary)
         {
             JobName = jName;
             CompanyName = cName;
             EndAdress = EAdress;
-            PublicationDate = new DateTime(DateTime.Now.Year, months[pMonth], int.Parse(pDay));
+            PublicationDate = date;
             Experience = exp;
+            MinSalary = salary;
         }
         public override string ToString()
         {
@@ -45,7 +32,9 @@ namespace ItmoJobsFetchingBot
             message += this.PublicationDate.ToString("dd MMMM") + "\n";
             message += this.JobName + "\n";
             message += this.CompanyName + "\n";
-            message += Configurations.StartAddress + this.EndAdress + "\n";
+            message += this.MinSalary == 0 ? "з/п требуется уточнить" : MinSalary.ToString() + "руб";
+            message += "\n";
+            message += Configurations.StartReference + this.EndAdress + "\n";
             return message;
         }
     }

@@ -14,6 +14,7 @@ namespace ItmoJobsFetchingBot
     {
         static private ItmoParser parser = new ItmoParser();
         static private TelegramBotClient ItmoBotClient = new TelegramBotClient(Configurations.AccessToken);
+        static private Random Rand = new Random();
         public void InitBot()
         {
             ItmoBotClient.OnMessage += Bot_OnMessage;
@@ -84,7 +85,7 @@ namespace ItmoJobsFetchingBot
         }
         private static string ParsingOne(int pageNumber) 
         {
-            ItmoJob job = parser.ParseItmoJobs(pageNumber).First();
+            ItmoJob job = parser.ParseItmoJobs(pageNumber).RandomItem();
             return job.ToString();
         }
         private static string ParsingAll(int pageNumber)
