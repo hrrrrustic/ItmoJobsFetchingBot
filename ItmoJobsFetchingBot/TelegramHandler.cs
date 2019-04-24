@@ -22,78 +22,67 @@ namespace ItmoJobsFetchingBot
         }
         private static async void Bot_OnMessage(object sender, MessageEventArgs e)
         {
-            string answerToUser = string.Empty;
+            Answer answerToUser;
             try
             {
-                answerToUser = MessageHandling(e.Message.Text);
-                await ItmoBotClient.SendTextMessageAsync(text: answerToUser, chatId: e.Message.Chat);
+                answerToUser = UserMessageHandling(e.Message.Text);
+
+                await ItmoBotClient.SendTextMessageAsync(text: answerToUser.TextAnswer, chatId: e.Message.Chat);
             }
             catch(Exception ex)
             {
                 string info = DateTime.Now.ToLongTimeString() + "\r\n" +
-                    ex.Message + "\r\n" + ex.TargetSite + "\r\nОтвет для пользователя : " + answerToUser + "\r\n--------------------\r\n";
+                    ex.Message + "\r\n" + ex.TargetSite + "\r\n--------------------\r\n";
                 File.AppendAllText("errorlist.txt", info);
             }
         }
-        private static string MessageHandling(string userMessage) //Стоит рзбить на подфункции
+        private static Answer UserMessageHandling(string userMessage) //Стоит рзбить на подфункции
         {
-            string answerToUser = string.Empty;
-            int commandArgument = TryParseCommandArgument(userMessage);
-            if (commandArgument == -1)
-            {
-                return "Нет такой страницы :с";
-            }
-            else
-            {
-                userMessage = Regex.Match(userMessage, "/[a-zA-Z]+").Value;
-            }
-            switch (userMessage)
-            {
-                case "/start":
-                    answerToUser = "Привет!\nВведи / или тыкни на такую же кнопку, чтобы увидеть команды";
-                    break;
-
-                case "/randpost":
-                    answerToUser = ParsingOne(commandArgument);
-                    break;
-
-                case "/allpost":
-                    answerToUser = ParsingAll(commandArgument);
-                    break;
-
-                 
-                default:
-                    answerToUser = "Нет такой команды :с\nПопробуй еще раз, чтобы увидеть команды, просто введи / " +
-                        "или тыкни на такую же кнопку";
-                    break;
-            }
-            return answerToUser;
-        }
-        private static string UserMessageHandling(string userMessage) //Стоит рзбить на подфункции
-        {
-            int intArgument;
-            string answerToUser = string.Empty;
+            int intArg;
+            Answer userAnswer = new Answer();
             bool anyArgs = TryParseArgument(userMessage, out string[] splittedMessage);
             if (anyArgs)
             {
-                //int.TryParse(splittedMessage[2], out intArgument) ? CommandHandling(splittedMessage[0], intArgument) : CommandHandling(splittedMessage[0], splittedMessage[1]) ;
+                bool isItIntArg = int.TryParse(splittedMessage[1], out intArg);
+                if (isItIntArg)
+                {
+                   userAnswer.TextAnswer = CommandHandling(splittedMessage[0], intArg);
+                }
+                else
+                {
+                    userAnswer.TextAnswer = CommandHandling(splittedMessage[0], splittedMessage[1]);
+                }
             }
             else
             {
-                intArgument = 1;
+                intArg = 1;
+                userAnswer.TextAnswer = CommandHandling(userMessage, intArg);
             }
-            return answerToUser;
+            return userAnswer;
         }
         
         private static string CommandHandling(string commnand, int pageCount)
         {
-
-            return "";
+            switch (commnand)
+            {
+                case ("/randpost"):
+                    return ParsingOne(pageCount);
+                case ("/allpost"):
+                    return ParsingAll(pageCount);
+                default:
+                    return "Нет такой команды или это команда принимает числовой аргумент: с";
+            }
         }
-        private static string CommandHandling(string commnand, string stringToSearch)
+        private static string CommandHandling(string commnand, string stringToSearch) //Сам поиск пока не делал
         {
-
-            return "";
+            if(commnand == "/search") // если будут еще команды с текстовым аргументом, то поменяю на свитч
+            {
+                return Search();
+            }
+            else
+            {
+                return "Нет такой команды или это команда принимает числовой аргумент :с";
+            }
         }
         private static bool TryParseArgument(string userMessage, out string[] splittedMessage)
         {
@@ -111,20 +100,11 @@ namespace ItmoJobsFetchingBot
                 return false;
             }
         }
-        
-        private static int TryParseCommandArgument(string userMessage)
+        private static string Search() //Для поиска в будущем
         {
-            Match number = Regex.Match(userMessage, "\\d+");
-            if (number == null)
-                return -1;
-            if (number.Value == "")
-                return 1;
-            int requestedPage = int.Parse(number.Value);
-            if(requestedPage < 1)
-                return -1;
-            int pageInFact = parser.ParseItmoPagesCount();
-            return requestedPage < pageInFact ? requestedPage : -1;
+            return "";
         }
+        
         private static string ParsingOne(int pageNumber) 
         {
             ItmoJob job = parser.ParseItmoJobs(pageNumber).RandomItem();

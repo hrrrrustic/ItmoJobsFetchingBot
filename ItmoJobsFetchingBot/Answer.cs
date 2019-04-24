@@ -8,5 +8,6 @@ namespace ItmoJobsFetchingBot
 {
     public class Answer
     {
+        public string TextAnswer { get; set; }
     }
 }
