@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configurations.cs" />
+    <Compile Include="ItmoJob.cs" />
     <Compile Include="ItmoParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

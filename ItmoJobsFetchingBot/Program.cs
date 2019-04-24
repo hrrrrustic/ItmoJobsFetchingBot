@@ -12,6 +12,7 @@ namespace ItmoJobsFetchingBot
         {
             TelegramHandler telegramBot = new TelegramHandler();
             telegramBot.InitBot();
+            Console.ReadKey();
         }
     }
 }

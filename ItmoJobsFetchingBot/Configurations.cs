@@ -10,5 +10,6 @@ namespace ItmoJobsFetchingBot
     {
         public static readonly string AccessToken = "Token";
         public static HttpToSocks5Proxy Proxy;
+        public const string StartAddress = "https://careers.itmo.ru/catalog/";
     }
 }
