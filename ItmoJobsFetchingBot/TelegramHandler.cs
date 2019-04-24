@@ -5,6 +5,8 @@ using Telegram.Bot;
 using Telegram.Bot.Args;
 using HtmlAgilityPack;
 using System.Text.RegularExpressions;
+using System.Linq;
+using System.IO;
 
 namespace ItmoJobsFetchingBot
 {
@@ -19,8 +21,18 @@ namespace ItmoJobsFetchingBot
         }
         private static async void Bot_OnMessage(object sender, MessageEventArgs e)
         {
-            string answerToUser = MessageHandling(e.Message.Text);
-            await ItmoBotClient.SendTextMessageAsync(text: answerToUser, chatId: e.Message.Chat);
+            string answerToUser = string.Empty;
+            try
+            {
+                answerToUser = MessageHandling(e.Message.Text);
+                await ItmoBotClient.SendTextMessageAsync(text: answerToUser, chatId: e.Message.Chat);
+            }
+            catch(Exception ex)
+            {
+                string info = DateTime.Now.ToLongTimeString() + "\r\n" +
+                    ex.Message + "\r\n" + ex.TargetSite + answerToUser + "\r\n--------------------\r\n";
+                File.AppendAllText("errorlist.txt", info);
+            }
         }
         private static string MessageHandling(string userMessage) //Стоит рзбить на подфункции
         {
@@ -41,7 +53,7 @@ namespace ItmoJobsFetchingBot
                     break;
 
                 case "/randpost":
-                    answerToUser = Parsing(commandArgument);
+                    answerToUser = ParsingOne(commandArgument);
                     break;
 
                 case "/allpost":
@@ -70,9 +82,9 @@ namespace ItmoJobsFetchingBot
             int pageInFact = parser.ParseItmoPagesCount();
             return requestedPage < pageInFact ? requestedPage : -1;
         }
-        private static string Parsing(int pageNumber) 
+        private static string ParsingOne(int pageNumber) 
         {
-            ItmoJob job = parser.ParseItmoJobs(pageNumber)[0];
+            ItmoJob job = parser.ParseItmoJobs(pageNumber).First();
             return job.ToString();
         }
         private static string ParsingAll(int pageNumber)

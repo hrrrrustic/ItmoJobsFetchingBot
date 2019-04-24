@@ -29,16 +29,19 @@ namespace ItmoJobsFetchingBot
             {"ноя", 11},
             {"дек", 12},
         };
-        public ItmoJob(string jName, string cName, string EAdress, string pDay, string pMonth)
+        public Tuple<int,int> Experience { get; set; }
+        public ItmoJob(string jName, string cName, string EAdress, string pDay, string pMonth, Tuple<int,int> exp)
         {
             JobName = jName;
             CompanyName = cName;
             EndAdress = EAdress;
             PublicationDate = new DateTime(DateTime.Now.Year, months[pMonth], int.Parse(pDay));
+            Experience = exp;
         }
         public override string ToString()
         {
             string message = string.Empty;
+            message += this.Experience.ToString() + "\n";
             message += this.PublicationDate.ToString("dd MMMM") + "\n";
             message += this.JobName + "\n";
             message += this.CompanyName + "\n";

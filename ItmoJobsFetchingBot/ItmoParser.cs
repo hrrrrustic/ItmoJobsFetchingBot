@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
+using System.Text.RegularExpressions;
 
 namespace ItmoJobsFetchingBot
 {
@@ -23,7 +24,10 @@ namespace ItmoJobsFetchingBot
                 string address = node.ChildNodes["h6"].ChildNodes["a"].Attributes["href"].Value;
                 string day = node.SelectSingleNode("//*[contains(@class, 'date')]").InnerText.Split(' ')[0];
                 string month = node.SelectSingleNode("//*[contains(@class, 'date')]").ChildNodes["span"].InnerText;
-                jobList.Add(new ItmoJob(jobName, companyName, address, day, month.ToLower()));
+                var exp = node.ChildNodes["p"].ChildNodes["br"].InnerText;
+                MatchCollection num = Regex.Matches(exp, "\\d+");
+                Tuple<int, int> experience = (int.Parse(num[0].Value), int.Parse(num[1].Value)).ToTuple();
+                jobList.Add(new ItmoJob(jobName, companyName, address, day, month.ToLower(), experience));
             }
             return jobList;
         }
