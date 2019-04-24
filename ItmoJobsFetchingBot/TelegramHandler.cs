@@ -1,31 +1,30 @@
 ﻿using System;
-using System.Threading;
 using System.Collections.Generic;
 using Telegram.Bot;
 using Telegram.Bot.Args;
-using HtmlAgilityPack;
 using System.Text.RegularExpressions;
-using System.Linq;
 using System.IO;
+using ItmoJobsFetchingBot.Helpers;
+using ItmoJobsFetchingBot.Models;
 
 namespace ItmoJobsFetchingBot
 {
     public class TelegramHandler
     {
-        static private ItmoParser parser = new ItmoParser();
-        static private TelegramBotClient ItmoBotClient = new TelegramBotClient(Configurations.AccessToken);
-        static private Random Rand = new Random();
+        private static readonly ItmoParser Parser = new ItmoParser();
+        private static readonly TelegramBotClient ItmoBotClient = new TelegramBotClient(Configurations.AccessToken);
+
         public void InitBot()
         {
             ItmoBotClient.OnMessage += Bot_OnMessage;
             ItmoBotClient.StartReceiving();
         }
+
         private static async void Bot_OnMessage(object sender, MessageEventArgs e)
         {
-            Answer answerToUser;
             try
             {
-                answerToUser = UserMessageHandling(e.Message.Text);
+                Answer answerToUser = UserMessageHandling(e.Message.Text);
 
                 await ItmoBotClient.SendTextMessageAsync(text: answerToUser.TextAnswer, chatId: e.Message.Chat);
             }
@@ -36,11 +35,14 @@ namespace ItmoJobsFetchingBot
                 File.AppendAllText("errorlist.txt", info);
             }
         }
+
         private static Answer UserMessageHandling(string userMessage) //Стоит рзбить на подфункции
         {
             int intArg;
             Answer userAnswer = new Answer();
             bool anyArgs = TryParseArgument(userMessage, out string[] splittedMessage);
+
+            //TODO:1 Очень странное решение. Не лучше ли сделать свитч по первому слову, а потом передавать массив как аргумент?
             if (anyArgs)
             {
                 bool isItIntArg = int.TryParse(splittedMessage[1], out intArg);
@@ -60,10 +62,10 @@ namespace ItmoJobsFetchingBot
             }
             return userAnswer;
         }
-        
-        private static string CommandHandling(string commnand, int pageCount)
+
+        private static string CommandHandling(string command, int pageCount)
         {
-            switch (commnand)
+            switch (command)
             {
                 case ("/randpost"):
                     return ParsingOne(pageCount);
@@ -73,9 +75,9 @@ namespace ItmoJobsFetchingBot
                     return "Нет такой команды или это команда принимает числовой аргумент: с";
             }
         }
-        private static string CommandHandling(string commnand, string stringToSearch) //Сам поиск пока не делал
+        private static string CommandHandling(string command, string stringToSearch) //Сам поиск пока не делал
         {
-            if(commnand == "/search") // если будут еще команды с текстовым аргументом, то поменяю на свитч
+            if(command == "/search") // если будут еще команды с текстовым аргументом, то поменяю на свитч
             {
                 return Search();
             }
@@ -84,6 +86,7 @@ namespace ItmoJobsFetchingBot
                 return "Нет такой команды или это команда принимает числовой аргумент :с";
             }
         }
+
         private static bool TryParseArgument(string userMessage, out string[] splittedMessage)
         {
             userMessage = userMessage.Trim();
@@ -100,19 +103,22 @@ namespace ItmoJobsFetchingBot
                 return false;
             }
         }
+
+        //TODO:2 Команды, кмк, стоит вынести в отдельный класс, чтобы они не сливались с логикой самого бота, который должен
+        // работать на уровне: прочитал - вызвал метода - ответил
         private static string Search() //Для поиска в будущем
         {
             return "";
         }
-        
+
         private static string ParsingOne(int pageNumber) 
         {
-            ItmoJob job = parser.ParseItmoJobs(pageNumber).RandomItem();
+            ItmoJob job = Parser.ParseItmoJobs(pageNumber).RandomItem();
             return job.ToString();
         }
         private static string ParsingAll(int pageNumber)
         {
-            List<ItmoJob> jobList = parser.ParseItmoJobs(pageNumber);
+            List<ItmoJob> jobList = Parser.ParseItmoJobs(pageNumber);
             string answer = string.Empty;
             foreach (var job in jobList)
             {

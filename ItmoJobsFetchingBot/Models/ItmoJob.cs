@@ -1,21 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using ItmoJobsFetchingBot.Helpers;
 
-namespace ItmoJobsFetchingBot
+namespace ItmoJobsFetchingBot.Models
 {
     public class ItmoJob
     {
         public string JobName { get; set; }
         public string CompanyName { get; set; }
         public string EndAdress { get; set; }
-
         public DateTime PublicationDate;
         public string SalaryInfo { get; set; } 
-
         public string Experience { get; set; }
+
+        //TODO:3 Буквы верни
         public ItmoJob(string jName, string cName, string EAdress, DateTime date, string exp, string salary)
         {
             JobName = jName;
@@ -27,6 +25,7 @@ namespace ItmoJobsFetchingBot
         }
         public override string ToString()
         {
+            //TODO:4 А зачем this?
             StringBuilder message = new StringBuilder();
             message.Append(this.PublicationDate.ToString("dd'/'MM'/'yyyy") + "\n");
             message.Append(this.JobName + "\n");
