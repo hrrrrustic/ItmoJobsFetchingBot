@@ -20,7 +20,7 @@ namespace ItmoJobsFetchingBot
             List<ItmoJob> jobList = new List<ItmoJob>();
             foreach (var node in nodes)
             {
-                jobList.Add(NodeToItmoJob(node));
+                jobList.Add(NodeToItmoJob(node.ChildNodes["h6"].ChildNodes["a"].Attributes["href"].Value));
             }
             return jobList;
         }
@@ -31,22 +31,18 @@ namespace ItmoJobsFetchingBot
             HtmlNodeCollection nodes = htmlDoc.DocumentNode.SelectSingleNode("//*[contains(@class,'pagination pull-right')]").ChildNodes;
             return nodes.Count - 2; // Buttons > and <
         }
-        private static ItmoJob NodeToItmoJob(HtmlNode node)
+        private static ItmoJob NodeToItmoJob(string referenceToNode)
         {
-            string jobName = node.ChildNodes["h6"].InnerText;
-            string companyName = node.ChildNodes["span"].InnerText.Split(',').First();
-            string endReference = node.ChildNodes["h6"].ChildNodes["a"].Attributes["href"].Value;
-
-            HtmlDocument jobPage = web.Load(Configurations.StartReference + endReference);
-            HtmlNode UpdateDate = jobPage.DocumentNode.SelectSingleNode("//*[contains(@class,'meta-left')]");
+            HtmlDocument jobPage = web.Load(Configurations.StartReference + referenceToNode);
+            HtmlNode rootNode = jobPage.DocumentNode;
+            string companyName = rootNode.SelectSingleNode("//h1").ChildNodes["small"].InnerText;
+            string jobName = rootNode.SelectSingleNode("//h1").InnerText;
+            HtmlNode UpdateDate = rootNode.SelectSingleNode("//*[contains(@class,'meta-left')]");
             DateTime date = DateTime.ParseExact(UpdateDate.InnerText.Split(':').Last(), "dd-MM-yyyy", CultureInfo.InvariantCulture);
-            var exp = node.ChildNodes["p"].ChildNodes["br"].InnerText;
-            MatchCollection num = Regex.Matches(exp, "\\d+");
-            int zp = 0;
-            if (num.Count > 2)
-                zp = int.Parse(num[2].Value);
-            Tuple<int, int> experience = (int.Parse(num[0].Value), int.Parse(num[1].Value)).ToTuple();
-            return new ItmoJob(jobName, companyName, endReference, date, experience, zp);
+            string experienceInfo = rootNode.SelectSingleNode("//*[contains(@class, 'list-unstyled')]").ChildNodes[3].InnerText;
+            string salaryInfo = rootNode.SelectSingleNode("//*[contains(@class, 'list-unstyled')]").ChildNodes[9].InnerText;
+            MatchCollection num = Regex.Matches(experienceInfo, "\\d+");
+            return new ItmoJob(jobName, companyName, referenceToNode, date, experienceInfo, salaryInfo);
         }
     }
 }

@@ -13,29 +13,28 @@ namespace ItmoJobsFetchingBot
         public string EndAdress { get; set; }
 
         public DateTime PublicationDate;
-        public int MinSalary { get; set; } 
+        public string SalaryInfo { get; set; } 
 
-        public Tuple<int,int> Experience { get; set; }
-        public ItmoJob(string jName, string cName, string EAdress, DateTime date, Tuple<int,int> exp, int salary)
+        public string Experience { get; set; }
+        public ItmoJob(string jName, string cName, string EAdress, DateTime date, string exp, string salary)
         {
             JobName = jName;
             CompanyName = cName;
             EndAdress = EAdress;
             PublicationDate = date;
             Experience = exp;
-            MinSalary = salary;
+            SalaryInfo = salary;
         }
         public override string ToString()
         {
-            string message = string.Empty;
-            message += this.Experience.ToString() + "\n";
-            message += this.PublicationDate.ToString("dd MMMM") + "\n";
-            message += this.JobName + "\n";
-            message += this.CompanyName + "\n";
-            message += this.MinSalary == 0 ? "з/п требуется уточнить" : MinSalary.ToString() + "руб";
-            message += "\n";
-            message += Configurations.StartReference + this.EndAdress + "\n";
-            return message;
+            StringBuilder message = new StringBuilder();
+            message.Append(this.PublicationDate.ToString("dd'/'MM'/'yyyy") + "\n");
+            message.Append(this.JobName + "\n");
+            message.Append(this.CompanyName + "\n");
+            message.Append(this.Experience.ToString() + "\n");
+            message.Append(this.SalaryInfo + "\n");
+            message.Append(Configurations.StartReference + this.EndAdress + "\n");
+            return message.ToString();
         }
     }
 }

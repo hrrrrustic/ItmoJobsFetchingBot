@@ -31,7 +31,7 @@ namespace ItmoJobsFetchingBot
             catch(Exception ex)
             {
                 string info = DateTime.Now.ToLongTimeString() + "\r\n" +
-                    ex.Message + "\r\n" + ex.TargetSite + answerToUser + "\r\n--------------------\r\n";
+                    ex.Message + "\r\n" + ex.TargetSite + "\r\nОтвет для пользователя : " + answerToUser + "\r\n--------------------\r\n";
                 File.AppendAllText("errorlist.txt", info);
             }
         }
@@ -94,7 +94,7 @@ namespace ItmoJobsFetchingBot
             string answer = string.Empty;
             foreach (var job in jobList)
             {
-                answer += job.ToString() + "-------------------\n";
+                answer += job.ToString() + "--------------------------------------\n";
             }
             return answer;
         }
