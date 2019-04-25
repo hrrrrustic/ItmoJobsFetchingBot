@@ -12,35 +12,42 @@ namespace ItmoJobsFetchingBot
     public class Commands
     {
         private static readonly ItmoParser Parser = new ItmoParser();
-        public Answer Search(string argument)
+        public string Search(string argument)
         {
 
-            return new Answer();
+            return "";
         }
-        public Answer RandPost(string argument)
+        public string RandPost(string argument)
         {
-
-            return new Answer();
+            int pageNumber = CheckValidArg(argument);
+            return Parser.ParseItmoJobs(pageNumber).RandomItem().ToString();
         }
-        public Answer AllPost(string argument)
+        public string AllPost(string argument)
         {
-
-            return new Answer();
-        }
-        private static string ParsingOne(int pageNumber)
-        {
-            ItmoJob job = Parser.ParseItmoJobs(pageNumber).RandomItem();
-            return job.ToString();
-        }
-        private static string ParsingAll(int pageNumber)
-        {
+            int pageNumber = CheckValidArg(argument);
             List<ItmoJob> jobList = Parser.ParseItmoJobs(pageNumber);
-            string answer = string.Empty;
-            foreach (var job in jobList)
+            string allJobsInOneMessage = string.Empty;
+            foreach (ItmoJob job in jobList)
             {
-                answer += job.ToString() + "--------------------------------------\n";
+                allJobsInOneMessage += job.ToString();
             }
-            return answer;
+            return allJobsInOneMessage;
+        }
+        private static int CheckValidArg(string argument)
+        {
+            bool IsIstInt = int.TryParse(argument, out int pageNumber);
+            if (IsIstInt)
+            {
+                if (pageNumber < 1 || pageNumber > Parser.ParseItmoPagesCount())
+                {
+                    throw new WrongArgumentException("Такая страница не существует");
+                }
+                return pageNumber;
+            }
+            else
+            {
+                throw new WrongArgumentException("Неверный формат аргумента");
+            }
         }
     }
 }

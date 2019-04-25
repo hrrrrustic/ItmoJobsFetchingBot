@@ -25,8 +25,8 @@ namespace ItmoJobsFetchingBot
             try
             {
                 string[] splittedMessage = SplitUserMessage(e.Message.Text);
-                Answer ans = CommandHandling(command : splittedMessage[0], argument : splittedMessage[1]);
-                await ItmoBotClient.SendTextMessageAsync(text: ans.TextAnswer, chatId: e.Message.Chat);
+                string answerToUser = CommandHandling(command : splittedMessage[0], argument : splittedMessage[1]);
+                await ItmoBotClient.SendTextMessageAsync(text: answerToUser, chatId: e.Message.Chat);
             }
             catch(Exception ex)
             {
@@ -36,7 +36,7 @@ namespace ItmoJobsFetchingBot
             }
         }
 
-        private static Answer CommandHandling(string command, string argument)
+        private static string CommandHandling(string command, string argument)
         {
             switch (command)
             {
@@ -53,7 +53,7 @@ namespace ItmoJobsFetchingBot
                     return commandHandler.AllPost(argument);
 
                 default:
-                    throw new ArgumentException();
+                    throw new WrongCommandException("Нет такой команды");
             }
         }
 
@@ -62,14 +62,14 @@ namespace ItmoJobsFetchingBot
             string defaultArg = "1";
             userMessage = userMessage.Trim();
             userMessage = Regex.Replace(userMessage, @"\s+", " ");
-            string[] split = userMessage.Split(' ');
-            if (split.Length == 2)
+            string[] splittedMessage = userMessage.Split(' ');
+            if (splittedMessage.Length == 2)
             {
-                return split;
+                return splittedMessage;
             }
             else
             {
-                return new string[] { split[0], defaultArg };
+                return new string[] { splittedMessage[0], defaultArg };
             }
         }
 

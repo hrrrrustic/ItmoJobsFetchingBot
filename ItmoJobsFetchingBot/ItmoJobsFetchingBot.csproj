@@ -55,8 +55,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BotExceptions.cs" />
     <Compile Include="Commands.cs" />
-    <Compile Include="Models\Answer.cs" />
     <Compile Include="Helpers\Configurations.cs" />
     <Compile Include="Models\ItmoJob.cs" />
     <Compile Include="ItmoParser.cs" />
