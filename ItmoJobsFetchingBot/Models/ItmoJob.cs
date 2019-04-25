@@ -8,31 +8,29 @@ namespace ItmoJobsFetchingBot.Models
     {
         public string JobName { get; set; }
         public string CompanyName { get; set; }
-        public string EndAdress { get; set; }
+        public string EndReference { get; set; }
         public DateTime PublicationDate;
         public string SalaryInfo { get; set; } 
         public string Experience { get; set; }
-
-        //TODO:3 Буквы верни
-        public ItmoJob(string jName, string cName, string EAdress, DateTime date, string exp, string salary)
+            
+        public ItmoJob(string jobName, string companyName, string endAdress, DateTime publicationDate, string expDescription, string salaryDescription)
         {
-            JobName = jName;
-            CompanyName = cName;
-            EndAdress = EAdress;
-            PublicationDate = date;
-            Experience = exp;
-            SalaryInfo = salary;
+            JobName = jobName;
+            CompanyName = companyName;
+            EndReference = endAdress;
+            PublicationDate = publicationDate;
+            Experience = expDescription;
+            SalaryInfo = salaryDescription;
         }
         public override string ToString()
         {
-            //TODO:4 А зачем this?
             StringBuilder message = new StringBuilder();
-            message.Append(this.PublicationDate.ToString("dd'/'MM'/'yyyy") + "\n");
-            message.Append(this.JobName + "\n");
-            message.Append("Компания : " + this.CompanyName + "\n");
-            message.Append(this.Experience.ToString() + "\n");
-            message.Append(this.SalaryInfo + "\n");
-            message.Append(Configurations.StartReference + this.EndAdress + "\n");
+            message.Append(PublicationDate.ToString("dd'/'MM'/'yyyy") + "\n");
+            message.Append(JobName + "\n");
+            message.Append("Компания : " + CompanyName + "\n");
+            message.Append(Experience.ToString() + "\n");
+            message.Append(SalaryInfo + "\n");
+            message.Append(Configurations.StartReference + EndReference + "\n");
             return message.ToString();
         }
     }
